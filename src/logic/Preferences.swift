@@ -28,6 +28,7 @@ class Preferences {
         "minDeminWindowShortcut": "M",
         "toggleFullscreenWindowShortcut": "F",
         "quitAppShortcut": "Q",
+        "test": ";",
         "hideShowAppShortcut": "H",
         "arrowKeysEnabled": "true",
         "vimKeysEnabled": "false",
@@ -124,6 +125,7 @@ class Preferences {
     static var minDeminWindowShortcut: String { defaults.string("minDeminWindowShortcut") }
     static var toggleFullscreenWindowShortcut: String { defaults.string("toggleFullscreenWindowShortcut") }
     static var quitAppShortcut: String { defaults.string("quitAppShortcut") }
+    static var test: String { defaults.string("test") }
     static var hideShowAppShortcut: String { defaults.string("hideShowAppShortcut") }
     static var arrowKeysEnabled: Bool { defaults.bool("arrowKeysEnabled") }
     static var vimKeysEnabled: Bool { defaults.bool("vimKeysEnabled") }

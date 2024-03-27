@@ -142,6 +142,43 @@ class Application: NSObject {
             alreadyRequestedToQuit = true
         }
     }
+    
+    func runShellCommand(command: String, completion: ((String?) -> Void)? = nil) {
+        DispatchQueue.global(qos: .background).async {
+            let task = Process()
+            task.launchPath = "/bin/bash"
+            task.arguments = ["-c", command]
+
+            let pipe = Pipe()
+            task.standardOutput = pipe
+            task.launch()
+
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8)
+
+            DispatchQueue.main.async {
+                 completion?(output)
+            }
+        }
+    }
+
+    
+    func move(){
+        runShellCommand(command: "/opt/homebrew/bin/yabai -m query --windows | /opt/homebrew/bin/jq '.[] | select(.pid==\(runningApplication.processIdentifier)) | .id'") { output in
+            if let output = output {
+                let command = "/opt/homebrew/bin/yabai -m window \(output) --space \(Spaces.currentSpaceIndex)"
+                let replaced = command.replacingOccurrences(of: "\n", with: " ")
+                debugPrint(replaced)
+                self.runShellCommand(command: replaced)
+            } else {
+                print("Failed to execute command.")
+            }
+        }
+
+        
+      
+        
+    }
 
     private func addWindow(_ axUiElement: AXUIElement, _ wid: CGWindowID, _ axTitle: String?, _ isFullscreen: Bool, _ isMinimized: Bool, _ position: CGPoint?, _ size: CGSize?) -> Window? {
         if (Windows.list.firstIndex { $0.isEqualRobust(axUiElement, wid) }) == nil {

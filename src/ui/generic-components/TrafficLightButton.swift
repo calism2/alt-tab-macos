@@ -183,6 +183,7 @@ enum TrafficLightButtonType {
     case close
     case miniaturize
     case fullscreen
+    case moveToCurrentWindow
 }
 
 

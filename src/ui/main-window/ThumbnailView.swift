@@ -18,6 +18,7 @@ class ThumbnailView: NSStackView {
     var closeIcon = TrafficLightButton(.close, NSLocalizedString("Close window", comment: ""), windowsControlSize)
     var minimizeIcon = TrafficLightButton(.miniaturize, NSLocalizedString("Minimize/Deminimize window", comment: ""), windowsControlSize)
     var maximizeIcon = TrafficLightButton(.fullscreen, NSLocalizedString("Fullscreen window", comment: ""), windowsControlSize)
+    var moveToCurrentWindowIcon = TrafficLightButton(.moveToCurrentWindow, "Move current windows", windowsControlSize)
     var hStackView: NSStackView!
     var mouseUpCallback: (() -> Void)!
     var mouseMovedCallback: (() -> Void)!
@@ -69,7 +70,8 @@ class ThumbnailView: NSStackView {
         thumbnail.addSubview(closeIcon, positioned: .above, relativeTo: nil)
         thumbnail.addSubview(minimizeIcon, positioned: .above, relativeTo: nil)
         thumbnail.addSubview(maximizeIcon, positioned: .above, relativeTo: nil)
-        [quitIcon, closeIcon, minimizeIcon, maximizeIcon].forEach { $0.isHidden = true }
+        thumbnail.addSubview(moveToCurrentWindowIcon, positioned: .above, relativeTo: nil)
+        [quitIcon, closeIcon, minimizeIcon, maximizeIcon, moveToCurrentWindowIcon ].forEach { $0.isHidden = true }
     }
 
     func showOrHideWindowControls(_ shouldShowWindowControls: Bool) {
