@@ -166,7 +166,7 @@ class Application: NSObject {
     func move(){
         runShellCommand(command: "/opt/homebrew/bin/yabai -m query --windows | /opt/homebrew/bin/jq '.[] | select(.pid==\(runningApplication.processIdentifier)) | .id'") { output in
             if let output = output {
-                let command = "/opt/homebrew/bin/yabai -m window \(output) --space \(Spaces.currentSpaceIndex)"
+                let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \(output) --space {}"
                 let replaced = command.replacingOccurrences(of: "\n", with: " ")
                 debugPrint(replaced)
                 self.runShellCommand(command: replaced)
