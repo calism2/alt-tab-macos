@@ -160,8 +160,12 @@ class App: AppCenterApplication, NSApplicationDelegate {
     
     func test(){
       
-        Windows.focusedWindow()?.application.move()
-        hideUi(true)
+        Windows.focusedWindow()?.application.move(){
+            self.focusSelectedWindow(Windows.focusedWindow())
+            self.hideUi(true)
+        }
+        
+
     }
 
     func hideShowSelectedApp() {
