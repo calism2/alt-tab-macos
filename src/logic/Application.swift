@@ -164,6 +164,19 @@ class Application: NSObject {
 
     
     func move(completion: @escaping ( ()-> Void)){
+        debugPrint(" Move ")
+        if let focusedWindow = focusedWindow, let windowId = focusedWindow.cgWindowId {
+            let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \"\(windowId)\" --space {}"
+            let replaced = command.replacingOccurrences(of: "\n", with: " ")
+            debugPrint(replaced)
+            self.runShellCommand(command: replaced) { result in
+                // Call completion block here if needed
+                completion()
+            }
+        }
+                
+    
+        /*
         runShellCommand(command: "/opt/homebrew/bin/yabai -m query --windows | /opt/homebrew/bin/jq '.[] | select(.pid==\(runningApplication.processIdentifier)) | .id'") { output in
             if let output = output {
                 let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \(output) --space {}"
@@ -176,9 +189,7 @@ class Application: NSObject {
                 print("Failed to execute command.")
             }
         }
-
-        
-      
+         */
         
     }
 
