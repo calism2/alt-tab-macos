@@ -158,13 +158,38 @@ class App: AppCenterApplication, NSApplicationDelegate {
         Windows.focusedWindow()?.application.quit()
     }
     
-    func test(){
-      
-        Windows.focusedWindow()?.application.move(){
-            self.focusSelectedWindow(Windows.focusedWindow())
-            self.hideUi(true)
+    func runShellCommand(command: String, completion: ((String?) -> Void)? = nil) {
+        DispatchQueue.global(qos: .background).async {
+            let task = Process()
+            task.launchPath = "/bin/bash"
+            task.arguments = ["-c", command]
+
+            let pipe = Pipe()
+            task.standardOutput = pipe
+            task.launch()
+
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8)
+
+            DispatchQueue.main.async {
+                 completion?(output)
+            }
         }
-        
+    }
+    
+    func test(){
+        if let windowId = Windows.focusedWindow()?.cgWindowId {
+            debugPrint(windowId)
+
+            let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \(windowId) --space {}"
+            let replaced = command.replacingOccurrences(of: "\n", with: " ")
+            debugPrint(replaced)
+            self.runShellCommand(command: replaced) { result in
+                self.focusSelectedWindow(Windows.focusedWindow())
+                self.hideUi(true)
+            }
+        }
+   
 
     }
 

@@ -143,55 +143,7 @@ class Application: NSObject {
         }
     }
     
-    func runShellCommand(command: String, completion: ((String?) -> Void)? = nil) {
-        DispatchQueue.global(qos: .background).async {
-            let task = Process()
-            task.launchPath = "/bin/bash"
-            task.arguments = ["-c", command]
 
-            let pipe = Pipe()
-            task.standardOutput = pipe
-            task.launch()
-
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8)
-
-            DispatchQueue.main.async {
-                 completion?(output)
-            }
-        }
-    }
-
-    
-    func move(completion: @escaping ( ()-> Void)){
-        debugPrint(" Move ")
-        if let focusedWindow = focusedWindow, let windowId = focusedWindow.cgWindowId {
-            let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \"\(windowId)\" --space {}"
-            let replaced = command.replacingOccurrences(of: "\n", with: " ")
-            debugPrint(replaced)
-            self.runShellCommand(command: replaced) { result in
-                // Call completion block here if needed
-                completion()
-            }
-        }
-                
-    
-        /*
-        runShellCommand(command: "/opt/homebrew/bin/yabai -m query --windows | /opt/homebrew/bin/jq '.[] | select(.pid==\(runningApplication.processIdentifier)) | .id'") { output in
-            if let output = output {
-                let command = "/opt/homebrew/bin/yabai -m query --spaces | /opt/homebrew/bin/jq '.[] | select(.\"has-focus\"==true) | .index' | xargs -I{} /opt/homebrew/bin/yabai -m window \(output) --space {}"
-                let replaced = command.replacingOccurrences(of: "\n", with: " ")
-                debugPrint(replaced)
-                self.runShellCommand(command: replaced){ result in
-                    completion()
-                }
-            } else {
-                print("Failed to execute command.")
-            }
-        }
-         */
-        
-    }
 
     private func addWindow(_ axUiElement: AXUIElement, _ wid: CGWindowID, _ axTitle: String?, _ isFullscreen: Bool, _ isMinimized: Bool, _ position: CGPoint?, _ size: CGSize?) -> Window? {
         if (Windows.list.firstIndex { $0.isEqualRobust(axUiElement, wid) }) == nil {
